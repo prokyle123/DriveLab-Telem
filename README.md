@@ -1,4 +1,4 @@
-# DriveLab Telem — BeamNG.drive Android Telemetry Dashboard
+﻿# DriveLab Telem â€” BeamNG.drive Android Telemetry Dashboard
 
 <p align="center">
   <img src="assets/feature-graphic-1024x500.svg" alt="DriveLab Telem for BeamNG.drive" width="100%">
@@ -9,24 +9,24 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/prokyle123/DriveLab-Telem/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/prokyle123/DriveLab-Telem?display_name=tag&style=for-the-badge"></a>
+  <a href="https://github.com/prokyle123/BeamNG-Android-Telemetry/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/prokyle123/BeamNG-Android-Telemetry?display_name=tag&style=for-the-badge"></a>
   <img alt="Android" src="https://img.shields.io/badge/Android-Companion_App-3DDC84?style=for-the-badge&logo=android&logoColor=white">
   <img alt="BeamNG telemetry" src="https://img.shields.io/badge/BeamNG.drive-Telemetry-F36F21?style=for-the-badge">
 </p>
 
 <p align="center">
-  <a href="https://github.com/prokyle123/DriveLab-Telem/releases/latest"><strong>Download the latest APK</strong></a>
-  ·
+  <a href="https://github.com/prokyle123/BeamNG-Android-Telemetry/releases/latest"><strong>Download the latest APK</strong></a>
+  Â·
   <a href="INSTALL.md">Setup guide</a>
-  ·
+  Â·
   <a href="FAQ.md">FAQ</a>
-  ·
+  Â·
   <a href="PRIVACY.md">Privacy</a>
 </p>
 
 ---
 
-## Your BeamNG cockpit—off the PC screen
+## Your BeamNG cockpitâ€”off the PC screen
 
 DriveLab Telem receives live telemetry directly from BeamNG.drive over your local Wi-Fi network. Mount your Android phone beside your wheel, on your dash, or anywhere you want a clean second-screen display without covering the game with extra HUD elements.
 
@@ -34,16 +34,16 @@ It uses BeamNG.drive's built-in **OutGauge** and **MotionSim** UDP outputs, so t
 
 ## Built for more than a speedometer
 
-- **Live Dashboard** — real-time driving data at a glance
-- **Digital Cockpit** — a focused instrument-panel view for regular driving
-- **Drift Lab** — analyze and track drift performance
-- **Drag & Brake Testing** — performance runs and braking measurements
-- **Vehicle Dynamics** — see how the vehicle behaves beyond basic speed and RPM
-- **Achievements** — goals that give every session something to chase
-- **Driver Progression** — build a persistent driving profile over time
-- **Animated Demo Mode** — explore the complete interface before activating
-- **Fast local connection** — OutGauge on UDP `4444` and MotionSim on UDP `4445`
-- **Private by design** — gameplay telemetry remains on your local network and phone
+- **Live Dashboard** â€” real-time driving data at a glance
+- **Digital Cockpit** â€” a focused instrument-panel view for regular driving
+- **Drift Lab** â€” analyze and track drift performance
+- **Drag & Brake Testing** â€” performance runs and braking measurements
+- **Vehicle Dynamics** â€” see how the vehicle behaves beyond basic speed and RPM
+- **Achievements** â€” goals that give every session something to chase
+- **Driver Progression** â€” build a persistent driving profile over time
+- **Animated Demo Mode** â€” explore the complete interface before activating
+- **Fast local connection** â€” OutGauge on UDP `4444` and MotionSim on UDP `4445`
+- **Private by design** â€” gameplay telemetry remains on your local network and phone
 
 ## See it in action
 
@@ -70,7 +70,7 @@ It uses BeamNG.drive's built-in **OutGauge** and **MotionSim** UDP outputs, so t
 
 1. Install the signed APK on your Android phone.
 2. Put the phone and BeamNG PC on the same local network.
-3. In BeamNG.drive, open **Options → Other → Protocols**.
+3. In BeamNG.drive, open **Options â†’ Other â†’ Protocols**.
 4. Send **OutGauge** to the phone on UDP port `4444`.
 5. Send **MotionSim** to the phone on UDP port `4445`.
 6. Open DriveLab Telem and drive.
@@ -85,7 +85,7 @@ A standard license supports **two active Android devices** unless the purchase l
 
 ## Download
 
-### [Download DriveLab Telem for Android](https://github.com/prokyle123/DriveLab-Telem/releases/latest)
+### [Download DriveLab Telem for Android](https://github.com/prokyle123/BeamNG-Android-Telemetry/releases/latest)
 
 Download the newest signed `DriveLab-Telem-vX.Y.Z.apk` from **Releases**. Each release includes a SHA-256 checksum so the APK can be verified before installation.
 
@@ -110,4 +110,5 @@ Before requesting help, check the [setup guide](INSTALL.md) and [FAQ](FAQ.md). I
 
 ---
 
-**BeamNG.drive® is a registered trademark of BeamNG GmbH. DriveLab Telem is an independent third-party companion application and is not affiliated with or endorsed by BeamNG GmbH.**
+**BeamNG.driveÂ® is a registered trademark of BeamNG GmbH. DriveLab Telem is an independent third-party companion application and is not affiliated with or endorsed by BeamNG GmbH.**
+
