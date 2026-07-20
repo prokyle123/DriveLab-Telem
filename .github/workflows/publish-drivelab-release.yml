@@ -25,6 +25,8 @@ jobs:
     steps:
       - name: Check out customer repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Download exact production APK
         shell: bash
@@ -68,3 +70,31 @@ jobs:
           set -euo pipefail
           gh release view "v$VERSION" --json tagName,name,url,assets \
             --jq '{tag: .tagName, name: .name, url: .url, assets: [.assets[].name]}'
+          gh release download "v$VERSION" \
+            --pattern "$APK_NAME" \
+            --dir release-check
+          printf '%s  %s\n' "$APK_SHA256" "release-check/$APK_NAME" | sha256sum --check
+
+      - name: Record verified release receipt
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p .github/release-status
+          RELEASE_URL="https://github.com/${GITHUB_REPOSITORY}/releases/tag/v${VERSION}"
+          cat > ".github/release-status/v${VERSION}.txt" <<EOF
+          DriveLab Telem ${VERSION} GitHub release verified
+          Version code: ${VERSION_CODE}
+          APK: ${APK_NAME}
+          APK SHA-256: ${APK_SHA256}
+          Release: ${RELEASE_URL}
+          Verified by workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
+          EOF
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ".github/release-status/v${VERSION}.txt"
+          if ! git diff --cached --quiet; then
+            git commit -m "Record verified DriveLab ${VERSION} release"
+            git push origin HEAD:main
+          fi
