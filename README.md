@@ -9,13 +9,18 @@
 </p>
 
 <p align="center">
+  <a href="https://drivelabregistration.org"><img alt="Official website" src="https://img.shields.io/badge/Official_Website-DriveLab_Telem-00C2FF?style=for-the-badge"></a>
   <a href="https://github.com/prokyle123/BeamNG-Android-Telemetry/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/prokyle123/BeamNG-Android-Telemetry?display_name=tag&style=for-the-badge"></a>
   <img alt="Android app" src="https://img.shields.io/badge/Android-Telemetry_App-3DDC84?style=for-the-badge&logo=android&logoColor=white">
   <img alt="BeamNG drive telemetry" src="https://img.shields.io/badge/BeamNG.drive-OutGauge_%2B_MotionSim-F36F21?style=for-the-badge">
 </p>
 
 <p align="center">
-  <a href="https://github.com/prokyle123/BeamNG-Android-Telemetry/releases/latest"><strong>DOWNLOAD THE ANDROID APK</strong></a>
+  <a href="https://drivelabregistration.org"><strong>OFFICIAL PRODUCT PAGE</strong></a>
+  &nbsp; | &nbsp;
+  <a href="https://drivelabregistration.org/download/latest"><strong>DOWNLOAD THE LATEST APK</strong></a>
+  &nbsp; | &nbsp;
+  <a href="https://drivelabregistration.org/go/buy"><strong>GET FULL EDITION</strong></a>
   &nbsp; | &nbsp;
   <a href="INSTALL.md"><strong>SETUP GUIDE</strong></a>
   &nbsp; | &nbsp;
@@ -25,6 +30,10 @@
 </p>
 
 ---
+
+## Official website
+
+Visit **[drivelabregistration.org](https://drivelabregistration.org)** for the full product page, Free-versus-Full comparison, setup instructions, support information, the latest signed APK, and Full Edition checkout.
 
 ## Put your telemetry where it belongs
 
@@ -43,7 +52,8 @@ DriveLab Telem connects directly to BeamNG.drive over your local network using t
 - **Vehicle Dynamics** - view motion and handling data beyond basic gauges
 - **Achievements** - more than 1,000 goals to keep every session interesting
 - **Driver Progression** - build a persistent driving profile over time
-- **Demo Mode** - explore the interface before activating live telemetry
+- **Free Edition** - basic live telemetry, setup, settings, licensing, and secure updates without an account
+- **Full Edition** - Cockpit, Race Labs, Analyze, automatic drive tracking, progression, achievements, saved sessions, crash history, advanced graphs, exports, and layout customization
 - **Secure in-app updates** - check, download, verify, and install signed DriveLab updates from the Setup screen
 - **Local and responsive** - telemetry travels directly from the PC to the Android device
 - **Private by design** - gameplay telemetry stays on your network and phone
@@ -65,15 +75,17 @@ DriveLab Telem connects directly to BeamNG.drive over your local network using t
   </tr>
   <tr>
     <td width="50%" align="center"><strong>Vehicle Dynamics</strong><br><img src="screenshots/07-dynamics.png" alt="DriveLab Telem vehicle dynamics" width="100%"></td>
-    <td width="50%" align="center"><strong>Guided Setup and Demo</strong><br><img src="screenshots/08-setup-demo.png" alt="DriveLab Telem setup and demo mode" width="100%"></td>
+    <td width="50%" align="center"><strong>Guided Setup</strong><br><img src="screenshots/08-setup-demo.png" alt="DriveLab Telem setup" width="100%"></td>
   </tr>
 </table>
 
-## Try it before you activate it
+## Start free, unlock more when ready
 
-The signed APK includes a full animated Demo Mode. Install it, explore the screens, and see how the app feels before purchasing a serial key. Live BeamNG.drive telemetry and the complete commercial experience require activation.
+The signed APK works immediately in Free Edition with no account, serial key, or server connection required. Free Edition includes basic Live telemetry, BeamNG connection setup, settings, licensing controls, and secure updates.
 
-A standard license supports **two active Android devices** unless the purchase listing states otherwise. The in-app Buy button opens the secure external checkout page in your browser. DriveLab Telem does not collect card information.
+Full Edition unlocks Cockpit, Race Labs, Analyze, automatic drive tracking, progression, achievements, saved sessions, crash history, advanced graphs, exports, and dashboard customization.
+
+A standard Full license supports **two active Android devices** unless the purchase listing states otherwise. The in-app Buy button opens the secure external checkout page in your browser. DriveLab Telem does not collect card information.
 
 ## Setup takes only a few minutes
 
@@ -88,11 +100,11 @@ Read the complete [installation and telemetry setup guide](INSTALL.md).
 
 ## Download
 
-### [Download the latest DriveLab Telem APK](https://github.com/prokyle123/BeamNG-Android-Telemetry/releases/latest)
+### [Download the latest signed DriveLab Telem APK](https://drivelabregistration.org/download/latest)
 
-Download the newest signed `DriveLab-Telem-vX.Y.Z.apk` from **Releases**. Each release includes a SHA-256 checksum so you can verify the APK before installation.
+The official website always points to the current production APK published by DriveLab's signed update system. The [GitHub Releases page](https://github.com/prokyle123/BeamNG-Android-Telemetry/releases/latest) remains available as a public mirror.
 
-DriveLab Telem 1.9.2 includes secure signed in-app updates. After installing an updater-enabled release, open **Setup > App Update** to check for and install future versions.
+DriveLab Telem 1.10.0 includes secure signed in-app updates. Open **Setup > App Update** to check for and install future versions.
 
 When manually updating, install the new APK directly over the existing version. Do not uninstall first unless troubleshooting requires it, because uninstalling removes local progression, achievements, settings, and saved sessions.
 
@@ -111,7 +123,7 @@ DriveLab Telem is commercial software. This repository distributes the signed cu
 
 ## Support
 
-Check the [setup guide](INSTALL.md) and [FAQ](FAQ.md) first. For support, email **auroramediagroup1@gmail.com** with the app version, Android device, BeamNG setup, connection status, and a screenshot that does not expose a serial key or other sensitive information.
+Visit the **[official DriveLab Telem website](https://drivelabregistration.org)**, then check the [setup guide](INSTALL.md) and [FAQ](FAQ.md). For support, email **auroramediagroup1@gmail.com** with the app version, Android device, BeamNG setup, connection status, and a screenshot that does not expose a serial key or other sensitive information.
 
 ---
 
