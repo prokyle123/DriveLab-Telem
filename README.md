@@ -98,6 +98,9 @@ A standard Full license supports **two active Android devices** unless the purch
 
 Read the complete [installation and telemetry setup guide](INSTALL.md).
 
+<img width="858" height="377" alt="image" src="https://github.com/user-attachments/assets/0fc5bd10-6c64-44e8-ab4f-a40597b62fa2" />
+
+
 ## Download
 
 ### [Download the latest signed DriveLab Telem APK](https://drivelabregistration.org/download/latest)
