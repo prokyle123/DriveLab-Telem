@@ -1,0 +1,73 @@
+name: Build temporary DriveLab Auto Co-Driver patch
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    if: startsWith(github.head_ref, 'tmp-autocodriver-package-')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create patch files
+        shell: bash
+        env:
+          INSTALLER_BLOB: 3c0f0b24653e5c1c222cc87b10c8026f1a0061d7
+          REPOSITORY_NAME: prokyle123/BeamNG-Android-Telemetry
+        run: |
+          set -euo pipefail
+          mkdir -p package
+          curl --fail --location --retry 5 \
+            -H 'Accept: application/vnd.github+json' \
+            -H 'User-Agent: DriveLab-Patch-Packager' \
+            "https://api.github.com/repos/${REPOSITORY_NAME}/git/blobs/${INSTALLER_BLOB}" \
+            | jq -r '.content' \
+            | tr -d '\n' \
+            | base64 --decode \
+            > package/APPLY-AUTO-CODRIVER-V2.2.0.ps1
+
+          cat > package/RUN-AUTO-CODRIVER-V2.2.0.bat <<'BAT'
+          @echo off
+          setlocal
+          cd /d "%~dp0"
+          powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\APPLY-AUTO-CODRIVER-V2.2.0.ps1"
+          if errorlevel 1 (
+              echo.
+              echo DriveLab Auto Co-Driver patch failed.
+              pause
+              exit /b 1
+          )
+          echo.
+          echo DriveLab Auto Co-Driver patch finished.
+          pause
+          BAT
+
+          cat > package/README-FIRST.txt <<'TXT'
+          DRIVELAB AUTO CO-DRIVER 2.2.0 PATCH
+
+          1. Extract this ZIP.
+          2. Open PowerShell inside the extracted folder.
+          3. Run:
+
+          powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\APPLY-AUTO-CODRIVER-V2.2.0.ps1"
+
+          Default project folder:
+          C:\Users\proky\OneDrive\Desktop\DriveLabTelem-v1.8.0-online-check-purchase
+
+          The patch creates a timestamped backup before changing the project.
+          It does not publish an APK or modify the update server.
+          TXT
+
+          chmod 0644 package/*
+
+      - name: Upload patch package
+        uses: actions/upload-artifact@v4
+        with:
+          name: drivelab-autocodriver-v2.2.0-patch
+          path: package/*
+          if-no-files-found: error
+          retention-days: 1
