@@ -22,6 +22,10 @@ try {
         '$absent = New-Object System.Collections.Generic.List[string]',
         '$absent = [System.Collections.Generic.List[string]]::new()'
     )
+    $source = $source.Replace(
+        '& $apksigner.FullName verify --verbose --print-certs $apk.FullName',
+        '& ($apksigner.FullName) verify --verbose --print-certs $apk.FullName'
+    )
 
     $oldRegexConstructor = @'
     $regex = New-Object System.Text.RegularExpressions.Regex(
