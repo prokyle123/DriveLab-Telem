@@ -27,6 +27,16 @@ try {
         '& ($apksigner.FullName) verify --verbose --print-certs $apk.FullName'
     )
 
+    # Use the stable ready flag instead of depending on the name of an internal bucket variable.
+    $source = $source.Replace(
+        "        previousTopSpeedBucket = floor(progress.topSpeedMph / 5.0).toInt()`n        ready = true",
+        "        ready = true"
+    )
+    $source = $source.Replace(
+        "        previousTopSpeedBucket = floor(progress.topSpeedMph / 5.0).toInt()`n        achievementRuntime.sync(progress, analyzer)`n        ready = true",
+        "        achievementRuntime.sync(progress, analyzer)`n        ready = true"
+    )
+
     $oldRegexConstructor = @'
     $regex = New-Object System.Text.RegularExpressions.Regex(
         $Pattern,
