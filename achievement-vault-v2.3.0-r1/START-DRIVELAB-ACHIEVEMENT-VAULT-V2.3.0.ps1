@@ -3,11 +3,39 @@ param([string]$ProjectPath = "")
 $ErrorActionPreference = "Stop"
 $sourcePath = Join-Path $PSScriptRoot "APPLY-DRIVELAB-ACHIEVEMENT-VAULT-V2.3.0-FIXED.ps1"
 $runtimePath = Join-Path $PSScriptRoot ".APPLY-DRIVELAB-ACHIEVEMENT-VAULT-V2.3.0-RUNTIME.ps1"
+$runtimePayloadPath = Join-Path $PSScriptRoot "payload\app\src\main\java\com\auroramediagroup\drivelab\AchievementRuntime.kt"
 
 try {
     if (!(Test-Path $sourcePath)) {
         throw "The Achievement Vault applier is missing: $sourcePath"
     }
+    if (!(Test-Path $runtimePayloadPath)) {
+        throw "The Achievement Vault runtime payload is missing: $runtimePayloadPath"
+    }
+
+    # Keep the runtime limited to fields already exposed by DriveLab's public telemetry model.
+    $runtimePayload = [System.IO.File]::ReadAllText($runtimePayloadPath)
+    $runtimePayload = $runtimePayload.Replace(
+        'val rollDeg = abs(derived?.rollDeg ?: motion?.rollDeg ?: 0.0)',
+        'val rollDeg = abs(derived?.rollDeg ?: 0.0)'
+    )
+    $runtimePayload = $runtimePayload.Replace(
+        'val pitchDeg = abs(derived?.pitchDeg ?: motion?.pitchDeg ?: 0.0)',
+        'val pitchDeg = abs(derived?.pitchDeg ?: 0.0)'
+    )
+    $runtimePayload = $runtimePayload.Replace(
+        'val verticalSpeed = abs(derived?.verticalSpeedMps ?: motion?.velZ ?: 0.0)',
+        'val verticalSpeed = abs(derived?.verticalSpeedMps ?: 0.0)'
+    )
+    $runtimePayload = $runtimePayload.Replace(
+        'if (newBrake100 || analyzer.brake.startSpeedMph >= 80.0) add(AchievementMetric.HIGH_SPEED_STOPS)',
+        'if (newBrake100) add(AchievementMetric.HIGH_SPEED_STOPS)'
+    )
+    [System.IO.File]::WriteAllText(
+        $runtimePayloadPath,
+        $runtimePayload,
+        [System.Text.UTF8Encoding]::new($false)
+    )
 
     $source = [System.IO.File]::ReadAllText($sourcePath)
     $source = $source.Replace(
