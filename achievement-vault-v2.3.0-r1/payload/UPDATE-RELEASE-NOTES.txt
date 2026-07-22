@@ -1,0 +1,10 @@
+DriveLab Telem 2.3.0 — Achievement Vault Rebuilt
+
+- Replaced the original tier-heavy catalog with 1,000 distinct driving challenges and the final DriveLab Legend achievement.
+- Added live challenge tracking for launches, reverse driving, shifting, drifting, braking, G-force, rollovers, endurance, temperatures, impacts, recoveries, pedal combinations, and unusual driving behavior.
+- Added Common, Skilled, Expert, Extreme, Insane, and Legendary rarity levels.
+- Added hidden secret challenges that reveal their names and requirements after unlock.
+- Added multi-condition, streak, recovery, full-drive, and alternative-route achievements.
+- Preserved XP, driver levels, specialty levels, cumulative statistics, records, licenses, settings, TrackLab courses, Auto Co-Driver data, RaceLink data, sessions, crashes, and the permanent Android signing identity.
+- Preserved the number of old achievement unlocks as a Legacy Vault record and awards Original Driver recognition.
+- Achievement tracking remains local to the Android device and uses only DriveLab's existing stock OutGauge and MotionSim telemetry.
