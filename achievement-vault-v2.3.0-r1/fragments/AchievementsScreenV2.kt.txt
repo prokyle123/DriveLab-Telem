@@ -1,0 +1,87 @@
+@Composable
+private fun AchievementsScreen(progress: DriverProgress) {
+    var category by rememberSaveable { mutableStateOf(AchievementCategory.ALL) }
+    var unlockedOnly by rememberSaveable { mutableStateOf(false) }
+    val catalog = remember(category, unlockedOnly, progress.achievements.size) {
+        AchievementCatalog.forCategory(category).filter { definition ->
+            !unlockedOnly || definition.id in progress.achievements
+        }
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            SectionHeader("Achievement Vault", "1,001 distinct driving challenges tracked automatically")
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                MetricCard("Unlocked", progress.achievements.size.toString(), Modifier.weight(1f), DriveGreen)
+                MetricCard("Remaining", (AchievementCatalog.TOTAL_ACHIEVEMENTS - progress.achievements.size).coerceAtLeast(0).toString(), Modifier.weight(1f), DriveAmber)
+                MetricCard("Total", AchievementCatalog.TOTAL_ACHIEVEMENTS.toString(), Modifier.weight(1f), DriveCyan)
+            }
+            ProgressMeter(progress.achievements.size.toDouble() / AchievementCatalog.TOTAL_ACHIEVEMENTS.toDouble(), DriveAmber)
+            if (progress.legacyAchievementCount > 0) {
+                InfoBlock(
+                    "Original Driver",
+                    "Your ${progress.legacyAchievementCount} unlocks from the original tier-based vault were preserved as a Legacy Vault record. XP, levels, statistics, and personal records were also preserved."
+                )
+            }
+            Row(modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                AchievementCategory.entries.forEach { item ->
+                    SelectButton(item.label, category == item) { category = item }
+                }
+            }
+            SettingSwitch("Unlocked only", "Hide challenges that are still in progress", unlockedOnly) { unlockedOnly = it }
+        }
+        LazyColumn(
+            contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier.weight(1f)
+        ) {
+            items(catalog, key = { it.id }) { achievement ->
+                val unlocked = achievement.id in progress.achievements
+                val hidden = achievement.secret && !unlocked
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(if (unlocked) DriveGreen.copy(alpha = 0.08f) else DrivePanel, RoundedCornerShape(16.dp))
+                        .border(1.dp, if (unlocked) DriveGreen.copy(alpha = 0.28f) else Color.White.copy(alpha = 0.06f), RoundedCornerShape(16.dp))
+                        .padding(13.dp),
+                    verticalArrangement = Arrangement.spacedBy(7.dp)
+                ) {
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                if (hidden) "SECRET CHALLENGE" else achievement.title,
+                                color = if (unlocked) Color.White else DriveMuted,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                if (hidden) "HIDDEN" else achievement.category.label.uppercase(),
+                                color = if (hidden) DriveAmber else DriveCyan,
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
+                        StatusChip(
+                            if (unlocked) "UNLOCKED" else achievement.rarity.label,
+                            unlocked
+                        )
+                    }
+                    Text(
+                        if (hidden) "Complete an unusual driving feat to reveal this challenge." else achievement.description,
+                        color = DriveMuted,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    if (!hidden) {
+                        ProgressMeter(achievement.progressFraction(progress), if (unlocked) DriveGreen else DriveAmber)
+                        Text(
+                            achievement.progressText(progress),
+                            color = if (unlocked) DriveGreen else DriveMuted,
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
