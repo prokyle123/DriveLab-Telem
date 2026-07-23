@@ -26,8 +26,9 @@ if ([string]::IsNullOrWhiteSpace($Text)) {
 
 # Keep the generated Kotlin source ASCII-safe inside the PowerShell script.
 # Kotlin renders this surrogate pair as the lock icon at runtime.
+$LockCharacter = [System.Char]::ConvertFromUtf32(0x1F512)
 $Text = $Text.Replace(
-    [char]0xD83D + [char]0xDD12,
+    $LockCharacter,
     '\uD83D\uDD12'
 )
 
