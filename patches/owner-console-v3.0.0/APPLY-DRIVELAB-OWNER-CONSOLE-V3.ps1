@@ -2,8 +2,8 @@ $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
 $Remote = "kali@ak47"
-$RemoteInstaller = "/home/kali/APPLY-DRIVELAB-OWNER-CONSOLE-V3.sh"
-$InstallerUrl = "https://raw.githubusercontent.com/prokyle123/BeamNG-Android-Telemetry/main/patches/owner-console-v3.0.0/APPLY-DRIVELAB-OWNER-CONSOLE-V3.sh"
+$RemoteInstaller = "/home/kali/APPLY-DRIVELAB-OWNER-CONSOLE-V3-R2.sh"
+$InstallerUrl = "https://raw.githubusercontent.com/prokyle123/BeamNG-Android-Telemetry/main/patches/owner-console-v3.0.0/APPLY-DRIVELAB-OWNER-CONSOLE-V3-R2.sh"
 
 $Ssh = Get-Command ssh.exe -ErrorAction Stop
 
