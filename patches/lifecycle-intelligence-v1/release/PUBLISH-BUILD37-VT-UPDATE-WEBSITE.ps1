@@ -6,6 +6,7 @@ param(
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+Add-Type -AssemblyName System.Net.Http
 
 $VersionName = "2.4.0"
 $VersionCode = 37
@@ -31,7 +32,8 @@ function Invoke-HttpJson(
     [string]$Uri,
     [System.Net.Http.HttpContent]$Content = $null
 ) {
-    $Request = New-Object System.Net.Http.HttpRequestMessage($Method, $Uri)
+    $Request = [System.Net.Http.HttpRequestMessage]::new($Method, $Uri)
+    $Response = $null
     if ($null -ne $Content) {
         $Request.Content = $Content
     }
@@ -47,6 +49,9 @@ function Invoke-HttpJson(
         }
     }
     finally {
+        if ($null -ne $Response) {
+            $Response.Dispose()
+        }
         $Request.Dispose()
     }
 }
@@ -118,18 +123,16 @@ finally {
 }
 if ([string]::IsNullOrWhiteSpace($Token)) { throw "No VirusTotal API token was entered." }
 
-Add-Type -AssemblyName System.Net.Http
-$Client = New-Object System.Net.Http.HttpClient
+$Client = [System.Net.Http.HttpClient]::new()
 $Client.Timeout = [TimeSpan]::FromMinutes(5)
 $Client.DefaultRequestHeaders.Add("x-apikey", $Token)
-$UploadStartedUtc = [DateTimeOffset]::UtcNow
 try {
     Write-Host ""
     Write-Host "===== UPLOADING THE EXACT APK TO VIRUSTOTAL =====" -ForegroundColor Cyan
-    $Multipart = New-Object System.Net.Http.MultipartFormDataContent
+    $Multipart = [System.Net.Http.MultipartFormDataContent]::new()
     $FileBytes = [System.IO.File]::ReadAllBytes($CanonicalApk)
-    $FileContent = New-Object System.Net.Http.ByteArrayContent -ArgumentList (,$FileBytes)
-    $FileContent.Headers.ContentType = New-Object System.Net.Http.Headers.MediaTypeHeaderValue("application/vnd.android.package-archive")
+    $FileContent = [System.Net.Http.ByteArrayContent]::new($FileBytes)
+    $FileContent.Headers.ContentType = [System.Net.Http.Headers.MediaTypeHeaderValue]::new("application/vnd.android.package-archive")
     $Multipart.Add($FileContent, "file", "DriveLab-Telem-v2.4.0.apk")
     try {
         $Upload = Invoke-HttpJson $Client ([System.Net.Http.HttpMethod]::Post) "https://www.virustotal.com/api/v3/files" $Multipart
@@ -251,7 +254,7 @@ DriveLab Telem 2.4.0 build 37
 $ShortHash = $Sha256.Substring(0, 12) + "&hellip;" + $Sha256.Substring($Sha256.Length - 12)
 $SecurityBlock = @"
 <!-- DRIVELAB DOWNLOAD TRUST START -->
-        <div class="download-security-trust" id="security" aria-label="DriveLab APK security verification">
+        <div class="download-security-trust" id="security" data-sha256="$Sha256" aria-label="DriveLab APK security verification">
           <div class="download-security-summary">
             <span class="download-security-icon" aria-hidden="true">&#10003;</span>
             <div>
