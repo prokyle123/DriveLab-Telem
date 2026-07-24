@@ -1,0 +1,179 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import json
+import os
+import pwd
+import grp
+import subprocess
+import time
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path("/var/lib/drivelab-license/ops")
+REQUESTS = ROOT / "requests"
+RESULTS = ROOT / "results"
+PYCACHE = ROOT / "pycache"
+MAX_REQUEST_AGE = 10 * 60
+MAX_OUTPUT = 16000
+
+
+def _systemctl(verb: str, unit: str, timeout: int = 120) -> list[str]:
+    return ["systemctl", verb, unit]
+
+
+ACTIONS: dict[str, dict[str, Any]] = {
+    "verified-backup": {
+        "command": _systemctl("start", "drivelab-admin-backup-v2.service"),
+        "timeout": 180,
+        "detail": "Verified local backup service completed.",
+    },
+    "restore-test": {
+        "command": _systemctl("start", "drivelab-admin-restore-test.service"),
+        "timeout": 180,
+        "detail": "Backup restore-test service completed.",
+    },
+    "refresh-public-status": {
+        "command": _systemctl("start", "drivelab-public-status-publisher.service"),
+        "timeout": 60,
+        "detail": "Public status publisher completed.",
+    },
+    "restart-api": {
+        "command": _systemctl("restart", "drivelab-license-api.service"),
+        "timeout": 90,
+        "detail": "License API restart completed.",
+    },
+    "restart-site": {
+        "command": _systemctl("restart", "drivelab-site.service"),
+        "timeout": 90,
+        "detail": "Public website restart completed.",
+    },
+    "restart-racelink-dashboard": {
+        "command": _systemctl("restart", "drivelab-racelink-dashboard.service"),
+        "timeout": 90,
+        "detail": "RaceLink operations dashboard restart completed.",
+    },
+    "run-tests": {
+        "command": [
+            "runuser",
+            "-u",
+            "drivelab-license",
+            "--",
+            "env",
+            f"PYTHONPYCACHEPREFIX={PYCACHE}",
+            "PYTHONDONTWRITEBYTECODE=0",
+            "PYTHONPATH=/opt/drivelab-license",
+            "/bin/bash",
+            "-lc",
+            "cd /opt/drivelab-license && "
+            "/opt/drivelab-license/.venv/bin/python -m compileall -q drivelab_license && "
+            "/opt/drivelab-license/.venv/bin/python -m pytest -q",
+        ],
+        "timeout": 360,
+        "detail": "DriveLab license-server tests completed.",
+    },
+}
+
+
+def _write_json(path: Path, value: dict[str, Any]) -> None:
+    temporary = path.with_suffix(path.suffix + f".tmp-{os.getpid()}")
+    temporary.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    temporary.chmod(0o640)
+    try:
+        user = pwd.getpwnam("drivelab-license")
+        group = grp.getgrnam("drivelab-license")
+        os.chown(temporary, user.pw_uid, group.gr_gid)
+    except (KeyError, PermissionError):
+        pass
+    temporary.replace(path)
+
+
+def _safe_request_id(value: str) -> bool:
+    return len(value) == 32 and all(character in "0123456789abcdef" for character in value)
+
+
+def _process(path: Path) -> None:
+    started_at = int(time.time())
+    request_id = path.stem
+    result: dict[str, Any] = {
+        "request_id": request_id,
+        "action": "",
+        "started_at": started_at,
+        "finished_at": started_at,
+        "duration_ms": 0,
+        "ok": False,
+        "returncode": -1,
+        "detail": "",
+        "stdout": "",
+        "stderr": "",
+    }
+    started = time.perf_counter()
+    try:
+        if not _safe_request_id(request_id):
+            raise RuntimeError("The request filename is invalid.")
+        if path.stat().st_uid not in {0, pwd.getpwnam("drivelab-license").pw_uid}:
+            raise RuntimeError("The request owner is not trusted.")
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(raw, dict):
+            raise RuntimeError("The request body is not an object.")
+        if str(raw.get("request_id") or "") != request_id:
+            raise RuntimeError("The request ID does not match its filename.")
+        action = str(raw.get("action") or "")
+        result["action"] = action
+        requested_at = int(raw.get("requested_at", 0) or 0)
+        if abs(int(time.time()) - requested_at) > MAX_REQUEST_AGE:
+            raise RuntimeError("The operation request is stale.")
+        config = ACTIONS.get(action)
+        if config is None:
+            raise RuntimeError("The requested action is not allowlisted.")
+        PYCACHE.mkdir(parents=True, exist_ok=True)
+        try:
+            user = pwd.getpwnam("drivelab-license")
+            group = grp.getgrnam("drivelab-license")
+            os.chown(PYCACHE, user.pw_uid, group.gr_gid)
+            PYCACHE.chmod(0o750)
+        except (KeyError, PermissionError):
+            pass
+        completed = subprocess.run(
+            list(config["command"]),
+            capture_output=True,
+            text=True,
+            timeout=int(config["timeout"]),
+            check=False,
+            env={**os.environ, "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"},
+        )
+        result["returncode"] = int(completed.returncode)
+        result["stdout"] = (completed.stdout or "")[-MAX_OUTPUT:]
+        result["stderr"] = (completed.stderr or "")[-MAX_OUTPUT:]
+        result["ok"] = completed.returncode == 0
+        result["detail"] = str(config["detail"]) if result["ok"] else (
+            result["stderr"].strip() or result["stdout"].strip() or f"Command exited with {completed.returncode}."
+        )
+    except subprocess.TimeoutExpired as exc:
+        result["detail"] = f"The operation exceeded its {int(exc.timeout)} second timeout."
+        result["stderr"] = str(exc.stderr or "")[-MAX_OUTPUT:]
+        result["stdout"] = str(exc.stdout or "")[-MAX_OUTPUT:]
+    except (OSError, ValueError, KeyError, TypeError, json.JSONDecodeError, RuntimeError) as exc:
+        result["detail"] = str(exc)
+    finally:
+        result["finished_at"] = int(time.time())
+        result["duration_ms"] = int((time.perf_counter() - started) * 1000)
+        RESULTS.mkdir(parents=True, exist_ok=True)
+        _write_json(RESULTS / f"{request_id}.json", result)
+        path.unlink(missing_ok=True)
+        if result.get("action") == "run-tests":
+            _write_json(ROOT / "last-test-run.json", result)
+
+
+def main() -> int:
+    REQUESTS.mkdir(parents=True, exist_ok=True)
+    RESULTS.mkdir(parents=True, exist_ok=True)
+    paths = sorted(REQUESTS.glob("*.request"), key=lambda item: item.stat().st_mtime)
+    for path in paths[:50]:
+        _process(path)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
