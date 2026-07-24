@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-SOURCE_URL="https://raw.githubusercontent.com/prokyle123/BeamNG-Android-Telemetry/main/patches/owner-console-v3.0.0/safe-deploy/PREPARE-AND-TEST.sh?checksum-fix=20260723-2030"
+SOURCE_URL="https://raw.githubusercontent.com/prokyle123/BeamNG-Android-Telemetry/main/patches/owner-console-v3.0.0/safe-deploy/PREPARE-AND-TEST.sh?checksum-fix=20260723-2031"
 TARGET="/home/kali/PREPARE-DRIVELAB-OWNER-V3-FIXED.sh"
 TEMPORARY="$(mktemp /tmp/PREPARE-DRIVELAB-OWNER-V3-FIXED.XXXXXX.sh)"
 
@@ -59,7 +59,7 @@ PYFIX
 bash -n "$TEMPORARY"
 grep -q 'No payload files were available to hash' "$TEMPORARY"
 grep -q 'ISOLATED STAGING TEST' "$TEMPORARY"
-install -o kali -g kali -m 0700 "$TEMPORARY" "$TARGET"
+install -m 0700 "$TEMPORARY" "$TARGET"
 
 echo "Prepared corrected isolated staging script: $TARGET"
 echo "This helper has not used sudo and has not changed production."
